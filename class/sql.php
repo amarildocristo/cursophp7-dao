@@ -10,19 +10,19 @@
 			$this->conn = new PDO("mysql:host=localhost;dbname=dbphp7", "root", "");
 		}
 
-		private function SetParams($statment, $parameters){
+		private function SetParams($statement, $parameters){
 
 			//Associando os parametros/dados
-			foreach ($parameters as $Chave => $valor) {
+			foreach ($parameters as $key => $value) {
 
-				$this->setParam($Chave, $valor);
+				$this->setParam($statement, $key, $value);
 			}			
 
 		}
 
-		private function SetParam($statment, $chave, $valor){
+		private function SetParam($statement, $key, $value){
 
-			$statment->bindParam($chave, $valor);	
+			$statement->bindParam($key, $value);	
 
 		}
 

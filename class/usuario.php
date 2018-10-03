@@ -49,13 +49,7 @@
 			));
 
 			if(count($results) > 0) {
-
-				$row = $results[0];//pegando a posição 0 por ser array de array
-				
-				$this->setIdusuario($row['idusuario']);
-				$this->setDeslogin($row['deslogin']);
-				$this->setDessenha($row['dessenha']);
-				$this->setDtcadastro(new DateTime($row['dtcadastro']));
+				$this->setData($results[0]);
 			}
 		}
 
@@ -91,19 +85,65 @@
 			));
 
 			if(count($results) > 0) {
-
-				$row = $results[0];//pegando a posição 0 por ser array de array
-				
-				$this->setIdusuario($row['idusuario']);
-				$this->setDeslogin($row['deslogin']);
-				$this->setDessenha($row['dessenha']);
-				$this->setDtcadastro(new DateTime($row['dtcadastro']));
+				$this->setData($results[0]);
 			}else{
-
-				throw new Exception("Login e/ou senha invalidos", 1);
-						
+				throw new Exception("Login e/ou senha invalidos", 1);		
 			}
-		}  
+		} 
+
+		public function setData($data){
+
+			$this->setIdusuario($data['idusuario']);
+			$this->setDeslogin($data['deslogin']);
+			$this->setDessenha($data['dessenha']);
+			$this->setDtcadastro(new DateTime($data['dtcadastro']));	
+				
+		}
+		
+		//Neste metodo criou-se uma procedure para trazer o id do usuario.
+		public function insert(){//não funcinou ainda!!
+
+			$sql = new Sql();	
+
+			$results = $sql->select("CALL sp_usuario_insert(:LOGIN, :PASSWORD)", array(
+				':LOGIN'=>$this->getDeslogin(),
+				':PASSWORD'=>$this->getDessenha()
+			));
+
+			if(count($results) > 0){
+				$this->setData($results[0]);
+			}
+
+		} 
+		
+
+		public function update($login, $password){
+
+			$this->setDeslogin($login);
+			$this->setDessenha($password);
+
+			$sql = new Sql();
+
+			$sql->query("UPDATE tb_usuarios SET deslogin = :LOGIN, dessenha = :PASSWORD WHERE idusuario = :ID", array(
+				'LOGIN'=>$this->getDeslogin(),
+				'PASSWORD'=>$this->getDessenha(),
+				':ID'=>$this->getIdusuario()
+			));
+		}
+
+		public function delete(){
+
+			$sql = new Sql();
+			$sql->query("DELETE FROM tb_usuarios WHERE idusuario = :ID", array(
+				':ID'=>$this->getIdusuario()
+			));
+
+			$this->setIdusuario(0);
+			$this->setDeslogin("");
+			$this->setDessenha("");
+			$this->setDtcadastro(new DateTime());
+
+		}
 
 		//Mostrar na tela o resultado.
 		public function __toString(){
